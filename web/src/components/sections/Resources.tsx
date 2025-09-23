@@ -8,7 +8,33 @@ type ResourcesSectionProps = {
 
 export function ResourcesSection({ links }: ResourcesSectionProps) {
   const hasLinks = Array.isArray(links) && links.length > 0;
-  const list: ResourceLink[] = hasLinks ? (links as ResourceLink[]) : [];
+  const defaultLinks: ResourceLink[] = [
+    {
+      id: "design-1",
+      label: "Design 1",
+      href: "https://trionn.com/",
+      description: "Trionn — portfolio site inspiration.",
+    },
+    {
+      id: "design-2",
+      label: "Design 2",
+      href: "https://www.misterpio.com/",
+      description: "Mister Pio — portfolio site inspiration.",
+    },
+    {
+      id: "design-3",
+      label: "Design 3",
+      href: "https://www.figma.com/community/file/1487309170684591074",
+      description: "Figma Community – UI resource.",
+    },
+    {
+      id: "design-4",
+      label: "Design 4",
+      href: "https://www.figma.com/community/file/1502760738131203364",
+      description: "Figma Community – UI resource.",
+    },
+  ];
+  const list: ResourceLink[] = hasLinks ? (links as ResourceLink[]) : defaultLinks;
 
   return (
     <CurvedPanel
@@ -27,7 +53,7 @@ export function ResourcesSection({ links }: ResourcesSectionProps) {
       >
         Resources
       </h1>
-      {!hasLinks ? (
+      {list.length === 0 ? (
         <p className="text-sm text-white/70 text-center w-full">
           Links to guides, FAQs, and docs will appear here.
         </p>

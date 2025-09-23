@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ElectricBorder from "@/components/ui/ElectricBorder";
 import { Eye, EyeOff, Search } from "lucide-react";
 
@@ -151,17 +151,31 @@ export default function AdminPage() {
     }
   };
 
-  const filteredTeams = useMemo(() => {
-    const list = Array.isArray(teams) ? teams : [];
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return list;
-    return list.filter(t =>
-      (t.team_name || "").toLowerCase().includes(q) ||
-      t.id.toLowerCase().includes(q) ||
-      (t.github_url || "").toLowerCase().includes(q) ||
-      (t.deployment_url || "").toLowerCase().includes(q)
+  const getTotalForTeam = useCallback((teamId: string) => {
+    const g = gradesByTeam[teamId];
+    return (
+      (g?.visual_aesthetics ?? 0) +
+      (g?.interactivity ?? 0) +
+      (g?.ui_navigation ?? 0) +
+      (g?.creativity ?? 0) +
+      (g?.performance ?? 0)
     );
-  }, [teams, searchQuery]);
+  }, [gradesByTeam]);
+
+  const filteredTeams = useMemo(() => {
+    const baseList = Array.isArray(teams) ? [...teams] : [];
+    const q = searchQuery.trim().toLowerCase();
+    const filtered = q
+      ? baseList.filter(t =>
+          (t.team_name || "").toLowerCase().includes(q) ||
+          t.id.toLowerCase().includes(q) ||
+          (t.github_url || "").toLowerCase().includes(q) ||
+          (t.deployment_url || "").toLowerCase().includes(q)
+        )
+      : baseList;
+    filtered.sort((a, b) => getTotalForTeam(b.id) - getTotalForTeam(a.id));
+    return filtered;
+  }, [teams, searchQuery, getTotalForTeam]);
 
   if (isAuthed === null) {
     return (
@@ -219,8 +233,8 @@ export default function AdminPage() {
         <button onClick={onLogout} className="rounded-md bg-white/10 hover:bg-white/20 text-white px-3 py-1.5">Logout</button>
       </header>
 
-      <div className="flex items-center justify-center gap-3">
-        <div className="relative w-full md:w-96">
+      <div className="w-full flex items-center justify-center">
+        <div className="relative w-full max-w-md">
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -238,28 +252,22 @@ export default function AdminPage() {
             </button>
           ) : null}
         </div>
-        <div className="hidden md:flex items-center gap-2">
-          <label className="text-sm text-white/70">Sort</label>
-          <button
-            type="button"
-            className="rounded-md bg-white/10 hover:bg-white/20 text-white px-3 py-1.5"
-            onClick={() => {
-              setTeams(prev => {
-                const cloned = [...prev];
-                cloned.sort((a, b) => {
-                  const ga = gradesByTeam[a.id];
-                  const gb = gradesByTeam[b.id];
-                  const ta = (ga?.visual_aesthetics ?? 0) + (ga?.interactivity ?? 0) + (ga?.ui_navigation ?? 0) + (ga?.creativity ?? 0) + (ga?.performance ?? 0);
-                  const tb = (gb?.visual_aesthetics ?? 0) + (gb?.interactivity ?? 0) + (gb?.ui_navigation ?? 0) + (gb?.creativity ?? 0) + (gb?.performance ?? 0);
-                  return tb - ta; // desc
-                });
-                return cloned;
-              });
-            }}
-          >
-            by Total Score
-          </button>
-        </div>
+      </div>
+      <div className="hidden md:flex items-center justify-end gap-2">
+        <label className="text-sm text-white/70">Sort</label>
+        <button
+          type="button"
+          className="rounded-md bg-white/10 hover:bg-white/20 text-white px-3 py-1.5"
+          onClick={() => {
+            setTeams(prev => {
+              const cloned = [...prev];
+              cloned.sort((a, b) => getTotalForTeam(b.id) - getTotalForTeam(a.id));
+              return cloned;
+            });
+          }}
+        >
+          by Total Score
+        </button>
       </div>
 
       {loading ? (

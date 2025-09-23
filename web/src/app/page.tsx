@@ -1,11 +1,9 @@
 "use client";
 
 import { Suspense, lazy, useEffect, useState } from "react";
-import { useEffect, useState } from "react";
 import { ResourcesSection } from "@/components/sections/Resources";
 import { ContactSection } from "@/components/sections/Contact";
 import { RulesSection } from "@/components/sections/Rules";
-import { Timeline } from "@/components/sections/Timeline";
 import { Author } from "@/components/sections/Author";
 import DemoOne from "@/components/ui/demo-one";
 import Loader from "@/components/ui/Loader";
@@ -91,8 +89,8 @@ export default function Home() {
         />
 
         <div className="relative z-10 flex items-center justify-center gap-6 md:gap-12 text-white whitespace-nowrap">
-          <div className="text-xs md:text-sm lg:text-lg font-medium text-white/90 truncate max-w-[180px] md:max-w-none">
-            Venue: <span className="text-cyan-400">Kamaraj Auditorium</span>
+          <div className="text-xs md:text-sm lg:text-lg fo  nt-medium text-white/90 truncate max-w-[180px] md:max-w-none">
+            Venue : <span className="text-cyan-400">VOC Auditorium</span>
           </div>
           <div className="flex space-x-4 md:space-x-6 text-center font-mono shrink-0">
             <div>
@@ -119,7 +117,7 @@ export default function Home() {
       </div>
 
       {/* Event Portal */}
-      <main className="px-2 py-40 max-w-5xl mx-auto space-y-16 bg-transparent">
+      <main className="px-2 pt-40 pb-20 max-w-5xl mx-auto space-y-16 bg-transparent">
         <div id="timeline" className="scroll-mt-24">
           <Suspense fallback={<Loader size={24} />}>
             <Timeline events={events} />
@@ -144,7 +142,7 @@ export default function Home() {
           </Suspense>
         </div>
 
-        <div id="authors" className="scroll-mt-24">
+        <div id="authors" className="scroll-mt-24 mt-20">
           <Author />
         </div>
 

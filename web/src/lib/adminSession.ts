@@ -3,8 +3,18 @@ import crypto from "node:crypto";
 const COOKIE_NAME = "admin_session";
 const DEFAULT_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
 
+// In development, generate an ephemeral secret per dev server start so that
+// restarting `npm run dev` invalidates existing admin sessions automatically.
+const DEV_FALLBACK_SECRET =
+  process.env.NODE_ENV !== "production"
+    ? crypto.randomBytes(32).toString("hex")
+    : "";
+
 function getSecret(): Buffer {
   const secret = process.env.ADMIN_SESSION_SECRET || "";
+  if (process.env.NODE_ENV !== "production" && !secret) {
+    return Buffer.from(DEV_FALLBACK_SECRET);
+  }
   if (!secret) throw new Error("ADMIN_SESSION_SECRET is not set");
   return Buffer.from(secret);
 }

@@ -46,6 +46,12 @@ export function RulesSection({ rules }: RulesSectionProps) {
       description:
         "Novel ideas, inventive problem-solving and unique presentation that stands out.",
     },
+    {
+      id: "recreation",
+      title: "Design Recreation Accuracy",
+      description:
+        "How accurately the submitted design recreates the provided inspirations, including layout, spacing, typography and interactions.",
+    },
   ];
 
   const items = hasRules ? rules : defaultCriteria;
@@ -83,6 +89,8 @@ export function RulesSection({ rules }: RulesSectionProps) {
                 return <Gauge className="w-5 h-5" />;
               case "creativity":
                 return <Sparkles className="w-5 h-5" />;
+            case "recreation":
+              return <Sparkles className="w-5 h-5" />;
               default:
                 return <Sparkles className="w-5 h-5" />;
             }
